@@ -1,12 +1,16 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Models;
 
-public class User
+[Index(nameof(Username), IsUnique = true)]
+public class User : BaseEntity
 {
-    public int Id { get; set; }
     [Required]
+    [MaxLength(255)]
+    [MinLength(4)]
     public required string Username { get; set; }
+
     [Required]
     public required string Password { get; set; }
 }
