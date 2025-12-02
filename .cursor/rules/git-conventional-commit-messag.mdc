@@ -1,0 +1,4 @@
+---
+alwaysApply: true
+---
+Use the Conventional Commit Messages specification to generate commit messages
