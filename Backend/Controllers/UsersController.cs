@@ -7,14 +7,9 @@ namespace Backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController : ControllerBase
+public class UsersController(AppDbContext context) : ControllerBase
 {
-    private readonly AppDbContext _context;
-
-    public UsersController(AppDbContext context)
-    {
-        _context = context;
-    }
+    private readonly AppDbContext _context = context;
 
     [HttpGet]
     public async Task<IActionResult> GetUsers()
