@@ -12,6 +12,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -22,18 +24,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/users", async (AppDbContext _context) =>
-{
-    var users = await _context.Users.ToListAsync();
-    return Results.Ok(users);
-});
-
-app.MapPost("/users", async (AppDbContext _context) =>
-{
-    var user = new User { Username = "John Doe", Password = "123456" };
-    await _context.Users.AddAsync(user);
-    await _context.SaveChangesAsync();
-    return Results.Ok(user);
-});
+app.MapControllers();
 
 app.Run();
