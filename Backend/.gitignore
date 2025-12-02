@@ -1,0 +1,26 @@
+# Build Folders
+bin/
+obj/
+out/
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Mac
+.DS_Store
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Logs
+*.log
+
+# Test Results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
