@@ -8,7 +8,7 @@ using Backend.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Backend.Tests;
+namespace Backend.Tests.Controllers;
 
 public class UsersControllerTests
 {
