@@ -141,4 +141,14 @@ public class UsersControllerTests
         var alreadySavedUserDeleted = await dbContext.Users.FindAsync(alreadySavedUser.Id);
         Assert.Null(alreadySavedUserDeleted);
     }
+
+    [Fact]
+    public async Task DeleteUser_ReturnsNotFoundResult()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var controller = new UsersController(dbContext);
+
+        var result = await controller.DeleteUser(1);
+        Assert.IsType<NotFoundResult>(result.Result);
+    }
 }
