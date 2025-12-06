@@ -3,6 +3,7 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.Responses;
+using Backend.Requests;
 
 namespace Backend.Controllers;
 
@@ -31,11 +32,13 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserResponse>> CreateUser([FromBody] User user)
+    public async Task<ActionResult<UserResponse>> CreateUser([FromBody] CreateUserRequest request)
     {
-        await _context.Users.AddAsync(user);
+        var user = new User { Username = request.Username, Password = request.Password };
+        var addedUser = await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new UserResponse { Id = user.Id, Username = user.Username });
+        var userResponse = new UserResponse { Id = addedUser.Entity.Id, Username = addedUser.Entity.Username };
+        return CreatedAtAction(nameof(GetUser), new { id = addedUser.Entity.Id }, userResponse);
     }
 
     [HttpPut("{id}")]
