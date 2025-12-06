@@ -52,7 +52,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
     {
-        var existingUser = await _context.Users.FindAsync(id);
+        var existingUser = await _context.Users.FindWithFiltersAsync(id);
         if (existingUser == null)
         {
             return NotFound();
@@ -60,7 +60,6 @@ public class UsersController(AppDbContext context) : ControllerBase
 
         existingUser.Username = request.Username;
         existingUser.Password = request.Password;
-        existingUser.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
         return NoContent();
@@ -69,7 +68,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _context.Users.FindWithFiltersAsync(id);
         if (user == null)
         {
             return NotFound();
