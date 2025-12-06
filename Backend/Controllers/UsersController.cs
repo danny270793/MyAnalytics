@@ -60,7 +60,6 @@ public class UsersController(AppDbContext context) : ControllerBase
 
         existingUser.Username = request.Username;
         existingUser.Password = request.Password;
-        existingUser.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
         return NoContent();
