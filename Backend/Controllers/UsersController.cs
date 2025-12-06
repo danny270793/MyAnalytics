@@ -31,11 +31,11 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> CreateUser([FromBody] User user)
+    public async Task<ActionResult<UserResponse>> CreateUser([FromBody] User user)
     {
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+        return CreatedAtAction(nameof(GetUser), new { id = user.Id }, new UserResponse { Id = user.Id, Username = user.Username });
     }
 
     [HttpPut("{id}")]
