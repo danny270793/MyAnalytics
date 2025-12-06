@@ -136,8 +136,9 @@ public class UsersControllerTests
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
-        Assert.Equal(2, paginator.TotalPages);
-        Assert.Equal(totalUsers - pageSize, paginator.Items.Count());
+        var pages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        Assert.Equal(pages, paginator.TotalPages);
+        Assert.Equal(totalUsers - (page - 1) * pageSize, paginator.Items.Count());
     }
 
     [Fact]
