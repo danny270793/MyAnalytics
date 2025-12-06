@@ -136,7 +136,7 @@ public class UsersControllerTests
         var controller = new UsersController(dbContext);
 
         var result = await controller.DeleteUser(1);
-        Assert.IsType<NoContentResult>(result.Result);
+        Assert.IsType<NoContentResult>(result);
         var alreadySavedUserDeleted = await dbContext.Users.FindAsync(alreadySavedUser.Id);
         Assert.Null(alreadySavedUserDeleted);
     }
@@ -148,6 +148,6 @@ public class UsersControllerTests
         var controller = new UsersController(dbContext);
 
         var result = await controller.DeleteUser(1);
-        Assert.IsType<NotFoundResult>(result.Result);
+        Assert.IsType<NotFoundResult>(result);
     }
 }
