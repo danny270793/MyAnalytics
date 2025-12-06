@@ -1,6 +1,6 @@
+using System;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Backend.Tests.Utils;
 
