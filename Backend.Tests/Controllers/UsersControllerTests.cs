@@ -91,7 +91,7 @@ public class UsersControllerTests
     }
 
     [Fact]
-    public async Task GetUsers_ReturnsPagedResult_WhenMoreThanPageSizeUsersAreSaved()
+    public async Task GetUsers_ReturnsPagedResult_Page1WhenMoreThanPageSizeUsersAreSaved()
     {
         var dbContext = GetInMemoryDbContext();
         var totalUsers = 15;
@@ -112,7 +112,32 @@ public class UsersControllerTests
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
         Assert.Equal(2, paginator.TotalPages);
-        Assert.Equal(totalUsers, paginator.Items.Count());
+        Assert.Equal(pageSize, paginator.Items.Count());
+    }
+
+    [Fact]
+    public async Task GetUsers_ReturnsPagedResult_Page2WhenMoreThanPageSizeUsersAreSaved()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var totalUsers = 15;
+        for (int i = 0; i < totalUsers; i++)
+        {
+            var user = new User { Id = i + 1, Username = $"test{i}", Password = $"test{i}" };
+            dbContext.Users.Add(user);
+        }
+        await dbContext.SaveChangesAsync();
+        var controller = new UsersController(dbContext);
+
+        var page = 2;
+        var pageSize = 10;
+        var result = await controller.GetUsers(page: page, pageSize: pageSize);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        Assert.Equal(page, paginator.Page);
+        Assert.Equal(pageSize, paginator.PageSize);
+        Assert.Equal(totalUsers, paginator.TotalItems);
+        Assert.Equal(2, paginator.TotalPages);
+        Assert.Equal(totalUsers - pageSize, paginator.Items.Count());
     }
 
     [Fact]
