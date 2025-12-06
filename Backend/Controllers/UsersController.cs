@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.Responses;
 using Backend.Requests;
+using Backend.Extensions;
 
 namespace Backend.Controllers;
 
@@ -19,16 +20,12 @@ public class UsersController(AppDbContext context) : ControllerBase
         int pageSize = 10
     )
     {
-        var query = _context.Users.AsNoTracking();
-        var totalItems = await query.CountAsync();
-
-        var users = await query
+        return Ok(await _context.Users
+            .AsNoTracking()
             .OrderBy(user => user.CreatedAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .Select(user => new UserResponse { Id = user.Id, Username = user.Username })
-            .ToListAsync();
-        return Ok(new PagedResult<UserResponse> { Items = users, Page = page, PageSize = pageSize, TotalItems = totalItems });
+            .ToPagedResultAsync(page, pageSize)
+        );
     }
 
     [HttpGet("{id}")]
