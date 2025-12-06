@@ -100,7 +100,7 @@ public class UsersControllerTests
 
         var updatedUser = new User { Id = alreadySavedUser.Id, Username = "test2", Password = "test2" };
         var result = await controller.UpdateUser(1, updatedUser);
-        Assert.IsType<NoContentResult>(result.Result);
+        Assert.IsType<NoContentResult>(result);
         var alreadySavedUserUpdated = await dbContext.Users.FindAsync(alreadySavedUser.Id);
         Assert.Equal(updatedUser.Username, alreadySavedUserUpdated?.Username);
         Assert.Equal(updatedUser.Password, alreadySavedUserUpdated?.Password);
@@ -113,7 +113,7 @@ public class UsersControllerTests
         var controller = new UsersController(dbContext);
 
         var result = await controller.UpdateUser(1, new User { Id = 1, Username = "test", Password = "test" });
-        Assert.IsType<NotFoundResult>(result.Result);
+        Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class UsersControllerTests
         var controller = new UsersController(dbContext);
 
         var result = await controller.UpdateUser(1, new User { Id = 2, Username = "test", Password = "test" });
-        Assert.IsType<BadRequestResult>(result.Result);
+        Assert.IsType<BadRequestResult>(result);
     }
 
     [Fact]
