@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Backend.Models;
+using Backend.Responses;
 
 namespace Backend.Controllers;
 
@@ -12,9 +13,9 @@ public class UsersController(AppDbContext context) : ControllerBase
     private readonly AppDbContext _context = context;
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsers()
     {
-        var users = await _context.Users.ToListAsync();
+        var users = await _context.Users.Select(user => new UserResponse { Id = user.Id, Username = user.Username }).ToListAsync();
         return Ok(users);
     }
 
