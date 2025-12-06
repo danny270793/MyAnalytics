@@ -116,4 +116,14 @@ public class UsersControllerTests
         var result = await controller.UpdateUser(1, new User { Id = 1, Username = "test", Password = "test" });
         Assert.IsType<NotFoundResult>(result.Result);
     }
+
+    [Fact]
+    public async Task UpdateUser_ReturnsBadRequestResult()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var controller = new UsersController(dbContext);
+
+        var result = await controller.UpdateUser(1, new User { Id = 2, Username = "test", Password = "test" });
+        Assert.IsType<BadRequestResult>(result.Result);
+    }
 }
