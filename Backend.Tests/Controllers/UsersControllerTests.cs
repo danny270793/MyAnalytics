@@ -22,6 +22,21 @@ public class UsersControllerTests
     public async Task GetUsers_ReturnsOkResult()
     {
         var dbContext = GetInMemoryDbContext();
+        var alreadySavedUser = new User { Id = 1, Username = "test", Password = "test" };
+        dbContext.Users.Add(alreadySavedUser);
+        await dbContext.SaveChangesAsync();
+        var controller = new UsersController(dbContext);
+
+        var result = await controller.GetUsers();
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var users = Assert.IsAssignableFrom<IEnumerable<User>>(okResult.Value);
+        Assert.Single(users);
+    }
+
+    [Fact]
+    public async Task GetUsers_ReturnsEmptyList()
+    {
+        var dbContext = GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
         var result = await controller.GetUsers();
