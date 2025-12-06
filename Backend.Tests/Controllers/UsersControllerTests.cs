@@ -126,4 +126,19 @@ public class UsersControllerTests
         var result = await controller.UpdateUser(1, new User { Id = 2, Username = "test", Password = "test" });
         Assert.IsType<BadRequestResult>(result.Result);
     }
+
+    [Fact]
+    public async Task DeleteUser_ReturnsNoContentResult()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var alreadySavedUser = new User { Id = 1, Username = "test", Password = "test" };
+        dbContext.Users.Add(alreadySavedUser);
+        await dbContext.SaveChangesAsync();
+        var controller = new UsersController(dbContext);
+
+        var result = await controller.DeleteUser(1);
+        Assert.IsType<NoContentResult>(result.Result);
+        var alreadySavedUserDeleted = await dbContext.Users.FindAsync(alreadySavedUser.Id);
+        Assert.Null(alreadySavedUserDeleted);
+    }
 }
