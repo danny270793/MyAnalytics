@@ -84,10 +84,9 @@ public class UsersControllerTests
         var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
         Assert.Equal(nameof(controller.GetUser), createdAtActionResult.ActionName);
         Assert.Equal(newUser.Id, createdAtActionResult.RouteValues?["id"]);
-        var user = Assert.IsAssignableFrom<User>(createdAtActionResult.Value);
+        var user = Assert.IsAssignableFrom<UserResponse>(createdAtActionResult.Value);
         Assert.Equal(newUser.Id, user.Id);
         Assert.Equal(newUser.Username, user.Username);
-        Assert.Equal(newUser.Password, user.Password);
     }
 
     [Fact]
