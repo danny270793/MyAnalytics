@@ -4,6 +4,7 @@ using Backend.Data;
 using Backend.Models;
 using Backend.Responses;
 using Backend.Requests;
+using Backend.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
@@ -68,6 +69,7 @@ public class UsersControllerTests
         Assert.Equal(itemsReturned, paginator.Items.Count());
     }
 
+    [Fact]
     public async Task GetUsers_ReturnsPagedResult_WhenLessThanPageSizeUsersAreSaved()
     {
         var dbContext = GetInMemoryDbContext();
@@ -230,7 +232,7 @@ public class UsersControllerTests
 
         var result = await controller.DeleteUser(1);
         Assert.IsType<NoContentResult>(result);
-        var alreadySavedUserDeleted = await dbContext.Users.FindAsync(alreadySavedUser.Id);
+        var alreadySavedUserDeleted = await dbContext.Users.FindWithFiltersAsync(alreadySavedUser.Id);
         Assert.Null(alreadySavedUserDeleted);
     }
 
