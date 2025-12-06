@@ -72,4 +72,21 @@ public class UsersControllerTests
         var result = await controller.GetUser(1);
         Assert.IsType<NotFoundResult>(result.Result);
     }
+
+    [Fact]
+    public async Task CreateUser_ReturnsCreatedAtActionResult()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var controller = new UsersController(dbContext);
+
+        var newUser = new User { Username = "test", Password = "test" };
+        var result = await controller.CreateUser(newUser);
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+        Assert.Equal(nameof(controller.GetUser), createdAtActionResult.ActionName);
+        Assert.Equal(1, createdAtActionResult.RouteValues["id"]);
+        var user = Assert.IsAssignableFrom<User>(createdAtActionResult.Value);
+        Assert.Equal(newUser.Id, user.Id);
+        Assert.Equal(newUser.Username, user.Username);
+        Assert.Equal(newUser.Password, user.Password);
+    }
 }
