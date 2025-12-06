@@ -99,12 +99,12 @@ public class UsersControllerTests
         await dbContext.SaveChangesAsync();
         var controller = new UsersController(dbContext);
 
-        var updatedUser = new User { Id = alreadySavedUser.Id, Username = "test2", Password = "test2" };
-        var result = await controller.UpdateUser(1, updatedUser);
+        var request = new UpdateUserRequest { Username = "test2", Password = "test2" };
+        var result = await controller.UpdateUser(1, request);
         Assert.IsType<NoContentResult>(result);
         var alreadySavedUserUpdated = await dbContext.Users.FindAsync(alreadySavedUser.Id);
-        Assert.Equal(updatedUser.Username, alreadySavedUserUpdated?.Username);
-        Assert.Equal(updatedUser.Password, alreadySavedUserUpdated?.Password);
+        Assert.Equal(request.Username, alreadySavedUserUpdated?.Username);
+        Assert.Equal(request.Password, alreadySavedUserUpdated?.Password);
     }
 
     [Fact]
@@ -113,18 +113,9 @@ public class UsersControllerTests
         var dbContext = GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
-        var result = await controller.UpdateUser(1, new User { Id = 1, Username = "test", Password = "test" });
+        var request = new UpdateUserRequest { Username = "test", Password = "test" };
+        var result = await controller.UpdateUser(1, request);
         Assert.IsType<NotFoundResult>(result);
-    }
-
-    [Fact]
-    public async Task UpdateUser_ReturnsBadRequestResult()
-    {
-        var dbContext = GetInMemoryDbContext();
-        var controller = new UsersController(dbContext);
-
-        var result = await controller.UpdateUser(1, new User { Id = 2, Username = "test", Password = "test" });
-        Assert.IsType<BadRequestResult>(result);
     }
 
     [Fact]
