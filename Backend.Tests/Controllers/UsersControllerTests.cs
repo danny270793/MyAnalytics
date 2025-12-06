@@ -3,6 +3,7 @@ using Backend.Controllers;
 using Backend.Data;
 using Backend.Models;
 using Backend.Responses;
+using Backend.Requests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
@@ -79,13 +80,13 @@ public class UsersControllerTests
         var dbContext = GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
-        var newUser = new User { Username = "test", Password = "test" };
+        var newUser = new CreateUserRequest { Username = "test", Password = "test" };
         var result = await controller.CreateUser(newUser);
         var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
         Assert.Equal(nameof(controller.GetUser), createdAtActionResult.ActionName);
-        Assert.Equal(newUser.Id, createdAtActionResult.RouteValues?["id"]);
+        Assert.Equal(1, createdAtActionResult.RouteValues?["id"]);
         var user = Assert.IsAssignableFrom<UserResponse>(createdAtActionResult.Value);
-        Assert.Equal(newUser.Id, user.Id);
+        Assert.Equal(1, user.Id);
         Assert.Equal(newUser.Username, user.Username);
     }
 
