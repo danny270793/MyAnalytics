@@ -44,7 +44,17 @@ public class UsersController(AppDbContext context) : ControllerBase
         {
             return BadRequest();
         }
-        _context.Entry(user).State = EntityState.Modified;
+
+        var existingUser = await _context.Users.FindAsync(id);
+        if (existingUser == null)
+        {
+            return NotFound();
+        }
+
+        existingUser.Username = user.Username;
+        existingUser.Password = user.Password;
+        existingUser.UpdatedAt = DateTime.UtcNow;
+
         await _context.SaveChangesAsync();
         return NoContent();
     }
