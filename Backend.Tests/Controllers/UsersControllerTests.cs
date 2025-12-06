@@ -106,4 +106,14 @@ public class UsersControllerTests
         Assert.Equal(updatedUser.Username, alreadySavedUserUpdated?.Username);
         Assert.Equal(updatedUser.Password, alreadySavedUserUpdated?.Password);
     }
+
+    [Fact]
+    public async Task UpdateUser_ReturnsNotFoundResult()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var controller = new UsersController(dbContext);
+
+        var result = await controller.UpdateUser(1, new User { Id = 1, Username = "test", Password = "test" });
+        Assert.IsType<NotFoundResult>(result.Result);
+    }
 }
