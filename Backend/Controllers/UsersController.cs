@@ -20,9 +20,9 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    public async Task<ActionResult<UserResponse>> GetUser(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _context.Users.Select(user => new UserResponse { Id = user.Id, Username = user.Username }).FirstOrDefaultAsync(user => user.Id == id);
         if (user == null)
         {
             return NotFound();
