@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Extensions;
 
@@ -9,6 +9,6 @@ public static class DbSetExtensions
         this DbSet<T> dbSet,
         object key) where T : BaseEntity
     {
-        return await dbSet.FirstOrDefaultAsync(e => e.Id == (int)key);
+        return await dbSet.FirstOrDefaultAsync(e => e.Id == (int) key);
     }
 }

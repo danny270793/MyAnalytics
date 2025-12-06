@@ -1,26 +1,18 @@
+using System.Threading.Tasks;
 using Backend.Data;
 using Backend.Models;
+using Backend.Tests.Utils;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
-using System.Threading.Tasks;
 
 namespace Backend.Tests.Data;
 
 public class AppDbContextTests
 {
-    private AppDbContext GetInMemoryDbContext()
-    {
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-
-        return new AppDbContext(options);
-    }
-
     [Fact]
     public async Task CreateUser()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var originalUser = new User { Id = 1, Username = "test", Password = "test" };
         await dbContext.Users.AddAsync(originalUser);
         await dbContext.SaveChangesAsync();
@@ -36,7 +28,7 @@ public class AppDbContextTests
     [Fact]
     public async Task UpdateUser()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var originalUser = new User { Id = 1, Username = "test", Password = "test" };
         await dbContext.Users.AddAsync(originalUser);
         await dbContext.SaveChangesAsync();
@@ -59,7 +51,7 @@ public class AppDbContextTests
     [Fact]
     public async Task DeleteUser()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var originalUser = new User { Id = 1, Username = "test", Password = "test" };
         await dbContext.Users.AddAsync(originalUser);
         await dbContext.SaveChangesAsync();
