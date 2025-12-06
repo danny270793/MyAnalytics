@@ -2,6 +2,7 @@
 using Backend.Controllers;
 using Backend.Data;
 using Backend.Models;
+using Backend.Responses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +30,7 @@ public class UsersControllerTests
 
         var result = await controller.GetUsers();
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var users = Assert.IsAssignableFrom<IEnumerable<User>>(okResult.Value);
+        var users = Assert.IsAssignableFrom<IEnumerable<UserResponse>>(okResult.Value);
         Assert.Single(users);
     }
 
@@ -41,7 +42,7 @@ public class UsersControllerTests
 
         var result = await controller.GetUsers();
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var users = Assert.IsAssignableFrom<IEnumerable<User>>(okResult.Value);
+        var users = Assert.IsAssignableFrom<IEnumerable<UserResponse>>(okResult.Value);
         Assert.Empty(users);
     }
 
