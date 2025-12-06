@@ -57,11 +57,10 @@ public class UsersControllerTests
 
         var result = await controller.GetUser(1);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var user = Assert.IsAssignableFrom<User>(okResult.Value);
+        var user = Assert.IsAssignableFrom<UserResponse>(okResult.Value);
 
         Assert.Equal(alreadySavedUser.Id, user.Id);
         Assert.Equal(alreadySavedUser.Username, user.Username);
-        Assert.Equal(alreadySavedUser.Password, user.Password);
     }
 
     [Fact]
