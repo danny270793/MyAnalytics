@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
 using Backend.Data;
-using Microsoft.EntityFrameworkCore;
-using Backend.Models;
-using Backend.Responses;
-using Backend.Requests;
 using Backend.Extensions;
+using Backend.Models;
+using Backend.Requests;
+using Backend.Responses;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers;
 
