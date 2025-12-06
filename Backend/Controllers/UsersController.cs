@@ -14,10 +14,19 @@ public class UsersController(AppDbContext context) : ControllerBase
     private readonly AppDbContext _context = context;
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<UserResponse>>> GetUsers()
+    public async Task<ActionResult<PagedResult<UserResponse>>> GetUsers(
+        int page = 1,
+        int pageSize = 10
+    )
     {
-        var users = await _context.Users.Select(user => new UserResponse { Id = user.Id, Username = user.Username }).ToListAsync();
-        return Ok(users);
+        var users = await _context.Users
+            .OrderBy(user => user.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(user => new UserResponse { Id = user.Id, Username = user.Username })
+            .ToListAsync();
+        var totalItems = await _context.Users.CountAsync();
+        return Ok(new PagedResult<UserResponse> { Items = users, Page = page, PageSize = pageSize, TotalItems = totalItems });
     }
 
     [HttpGet("{id}")]
