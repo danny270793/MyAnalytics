@@ -37,4 +37,12 @@ csharp_space_after_cast = true
 csharp_space_before_colon_in_inheritance_clause = true
 csharp_space_after_keywords_in_control_flow_statements = true
 
-file_header_template = copyright
+dotnet_naming_rule.async_methods_must_end_with_async.severity = suggestion
+dotnet_naming_rule.async_methods_must_end_with_async.symbols = async_methods
+dotnet_naming_rule.async_methods_must_end_with_async.style = end_with_async
+
+dotnet_naming_symbols.async_methods.applicable_kinds = method
+dotnet_naming_symbols.async_methods.required_modifiers = async
+
+dotnet_naming_style.end_with_async.capitalization = pascal_case
+dotnet_naming_style.end_with_async.required_suffix = Async
