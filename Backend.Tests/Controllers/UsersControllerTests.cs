@@ -48,6 +48,25 @@ public class UsersControllerTests
     }
 
     [Fact]
+    public async Task GetUsers_ReturnsPagedResult_WhenNoUsersAreSaved()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var controller = new UsersController(dbContext);
+
+        var page = 1;
+        var pageSize = 10;
+
+        var result = await controller.GetUsers(page: page, pageSize: pageSize);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        Assert.Equal(page, paginator.Page);
+        Assert.Equal(pageSize, paginator.PageSize);
+        Assert.Equal(0, paginator.TotalItems);
+        Assert.Equal(0, paginator.TotalPages);
+        Assert.Empty(paginator.Items);
+    }
+
+    [Fact]
     public async Task GetUser_ReturnsOkResult()
     {
         var dbContext = GetInMemoryDbContext();
