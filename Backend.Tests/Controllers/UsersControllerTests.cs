@@ -31,8 +31,8 @@ public class UsersControllerTests
 
         var result = await controller.GetUsers();
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var users = Assert.IsAssignableFrom<IEnumerable<UserResponse>>(okResult.Value);
-        Assert.Single(users);
+        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        Assert.Single(paginator.Items);
     }
 
     [Fact]
@@ -43,8 +43,8 @@ public class UsersControllerTests
 
         var result = await controller.GetUsers();
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var users = Assert.IsAssignableFrom<IEnumerable<UserResponse>>(okResult.Value);
-        Assert.Empty(users);
+        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        Assert.Empty(paginator.Items);
     }
 
     [Fact]
