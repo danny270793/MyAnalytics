@@ -1,30 +1,22 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Backend.Controllers;
 using Backend.Data;
-using Backend.Models;
-using Backend.Responses;
-using Backend.Requests;
 using Backend.Extensions;
-using Microsoft.EntityFrameworkCore;
+using Backend.Models;
+using Backend.Requests;
+using Backend.Responses;
+using Backend.Tests.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Tests.Controllers;
 
 public class UsersControllerTests
 {
-    private AppDbContext GetInMemoryDbContext()
-    {
-        var options = new DbContextOptionsBuilder<AppDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-
-        return new AppDbContext(options);
-    }
-
     [Fact]
     public async Task GetUsers_ReturnsOkResult()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var alreadySavedUser = new User { Id = 1, Username = "test", Password = "test" };
         dbContext.Users.Add(alreadySavedUser);
         await dbContext.SaveChangesAsync();
@@ -39,7 +31,7 @@ public class UsersControllerTests
     [Fact]
     public async Task GetUsers_ReturnsEmptyList()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
         var result = await controller.GetUsers();
@@ -51,7 +43,7 @@ public class UsersControllerTests
     [Fact]
     public async Task GetUsers_ReturnsPagedResult_WhenNoUsersAreSaved()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
         var totalUsers = 0;
@@ -63,7 +55,7 @@ public class UsersControllerTests
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
-        var pages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        var pages = (int) Math.Ceiling((double) totalUsers / pageSize);
         Assert.Equal(pages, paginator.TotalPages);
         int itemsReturned = Math.Max(0, Math.Min(pageSize, totalUsers - (page - 1) * pageSize));
         Assert.Equal(itemsReturned, paginator.Items.Count());
@@ -72,7 +64,7 @@ public class UsersControllerTests
     [Fact]
     public async Task GetUsers_ReturnsPagedResult_WhenLessThanPageSizeUsersAreSaved()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var totalUsers = 5;
         for (int i = 0; i < totalUsers; i++)
         {
@@ -90,7 +82,7 @@ public class UsersControllerTests
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
-        var pages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        var pages = (int) Math.Ceiling((double) totalUsers / pageSize);
         Assert.Equal(pages, paginator.TotalPages);
         int itemsReturned = Math.Max(0, Math.Min(pageSize, totalUsers - (page - 1) * pageSize));
         Assert.Equal(itemsReturned, paginator.Items.Count());
@@ -99,7 +91,7 @@ public class UsersControllerTests
     [Fact]
     public async Task GetUsers_ReturnsPagedResult_Page1WhenMoreThanPageSizeUsersAreSaved()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var totalUsers = 15;
         for (int i = 0; i < totalUsers; i++)
         {
@@ -117,7 +109,7 @@ public class UsersControllerTests
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
-        var pages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        var pages = (int) Math.Ceiling((double) totalUsers / pageSize);
         Assert.Equal(pages, paginator.TotalPages);
         int itemsReturned = Math.Max(0, Math.Min(pageSize, totalUsers - (page - 1) * pageSize));
         Assert.Equal(itemsReturned, paginator.Items.Count());
@@ -126,7 +118,7 @@ public class UsersControllerTests
     [Fact]
     public async Task GetUsers_ReturnsPagedResult_Page2WhenMoreThanPageSizeUsersAreSaved()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var totalUsers = 15;
         for (int i = 0; i < totalUsers; i++)
         {
@@ -144,7 +136,7 @@ public class UsersControllerTests
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
-        var pages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        var pages = (int) Math.Ceiling((double) totalUsers / pageSize);
         Assert.Equal(pages, paginator.TotalPages);
         int itemsReturned = Math.Max(0, Math.Min(pageSize, totalUsers - (page - 1) * pageSize));
         Assert.Equal(itemsReturned, paginator.Items.Count());
@@ -153,7 +145,7 @@ public class UsersControllerTests
     [Fact]
     public async Task GetUser_ReturnsOkResult()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var alreadySavedUser = new User { Id = 1, Username = "test", Password = "test" };
         dbContext.Users.Add(alreadySavedUser);
         await dbContext.SaveChangesAsync();
@@ -170,7 +162,7 @@ public class UsersControllerTests
     [Fact]
     public async Task GetUser_ReturnsNotFoundResult()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
         var result = await controller.GetUser(1);
@@ -180,7 +172,7 @@ public class UsersControllerTests
     [Fact]
     public async Task CreateUser_ReturnsCreatedAtActionResult()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
         var request = new CreateUserRequest { Username = "test", Password = "test" };
@@ -196,7 +188,7 @@ public class UsersControllerTests
     [Fact]
     public async Task UpdateUser_ReturnsNoContentResult()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var alreadySavedUser = new User { Id = 1, Username = "test", Password = "test" };
         dbContext.Users.Add(alreadySavedUser);
         await dbContext.SaveChangesAsync();
@@ -213,7 +205,7 @@ public class UsersControllerTests
     [Fact]
     public async Task UpdateUser_ReturnsNotFoundResult()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
         var request = new UpdateUserRequest { Username = "test", Password = "test" };
@@ -224,7 +216,7 @@ public class UsersControllerTests
     [Fact]
     public async Task DeleteUser_ReturnsNoContentResult()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var alreadySavedUser = new User { Id = 1, Username = "test", Password = "test" };
         dbContext.Users.Add(alreadySavedUser);
         await dbContext.SaveChangesAsync();
@@ -239,7 +231,7 @@ public class UsersControllerTests
     [Fact]
     public async Task DeleteUser_ReturnsNotFoundResult()
     {
-        var dbContext = GetInMemoryDbContext();
+        var dbContext = Database.GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
         var result = await controller.DeleteUser(1);
