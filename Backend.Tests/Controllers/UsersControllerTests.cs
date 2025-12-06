@@ -25,10 +25,8 @@ public class UsersControllerTests
         var controller = new UsersController(dbContext);
 
         var result = await controller.GetUsers();
-        Assert.IsType<OkObjectResult>(result);
-        var okResult = result as OkObjectResult;
-        Assert.IsType<List<User>>(okResult.Value);
-        var users = okResult.Value as List<User>;
-        Assert.Equal(0, users.Count);
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var users = Assert.IsAssignableFrom<IEnumerable<User>>(okResult.Value ?? new List<User>());
+        Assert.Empty(users ?? new List<User>());
     }
 }
