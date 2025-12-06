@@ -1,9 +1,9 @@
+using System.Threading.Tasks;
 using Backend.Data;
 using Backend.Models;
 using Backend.Tests.Utils;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
-using System.Threading.Tasks;
 
 namespace Backend.Tests.Data;
 
