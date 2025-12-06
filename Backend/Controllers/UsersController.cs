@@ -39,7 +39,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<User>> UpdateUser(int id, [FromBody] User user)
+    public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
     {
         if (id != user.Id)
         {
