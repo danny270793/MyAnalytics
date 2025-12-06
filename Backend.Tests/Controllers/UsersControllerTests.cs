@@ -1,13 +1,13 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Backend.Controllers;
 using Backend.Data;
-using Backend.Models;
-using Backend.Responses;
-using Backend.Requests;
 using Backend.Extensions;
+using Backend.Models;
+using Backend.Requests;
+using Backend.Responses;
 using Backend.Tests.Utils;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Tests.Controllers;
 
@@ -55,7 +55,7 @@ public class UsersControllerTests
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
-        var pages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        var pages = (int) Math.Ceiling((double) totalUsers / pageSize);
         Assert.Equal(pages, paginator.TotalPages);
         int itemsReturned = Math.Max(0, Math.Min(pageSize, totalUsers - (page - 1) * pageSize));
         Assert.Equal(itemsReturned, paginator.Items.Count());
@@ -82,7 +82,7 @@ public class UsersControllerTests
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
-        var pages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        var pages = (int) Math.Ceiling((double) totalUsers / pageSize);
         Assert.Equal(pages, paginator.TotalPages);
         int itemsReturned = Math.Max(0, Math.Min(pageSize, totalUsers - (page - 1) * pageSize));
         Assert.Equal(itemsReturned, paginator.Items.Count());
@@ -109,7 +109,7 @@ public class UsersControllerTests
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
-        var pages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        var pages = (int) Math.Ceiling((double) totalUsers / pageSize);
         Assert.Equal(pages, paginator.TotalPages);
         int itemsReturned = Math.Max(0, Math.Min(pageSize, totalUsers - (page - 1) * pageSize));
         Assert.Equal(itemsReturned, paginator.Items.Count());
@@ -136,7 +136,7 @@ public class UsersControllerTests
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
-        var pages = (int)Math.Ceiling((double)totalUsers / pageSize);
+        var pages = (int) Math.Ceiling((double) totalUsers / pageSize);
         Assert.Equal(pages, paginator.TotalPages);
         int itemsReturned = Math.Max(0, Math.Min(pageSize, totalUsers - (page - 1) * pageSize));
         Assert.Equal(itemsReturned, paginator.Items.Count());
