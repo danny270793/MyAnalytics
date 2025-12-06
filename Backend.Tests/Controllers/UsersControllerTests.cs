@@ -89,4 +89,21 @@ public class UsersControllerTests
         Assert.Equal(newUser.Username, user.Username);
         Assert.Equal(newUser.Password, user.Password);
     }
+
+    [Fact]
+    public async Task UpdateUser_ReturnsNoContentResult()
+    {
+        var dbContext = GetInMemoryDbContext();
+        var alreadySavedUser = new User { Id = 1, Username = "test", Password = "test" };
+        dbContext.Users.Add(alreadySavedUser);
+        await dbContext.SaveChangesAsync();
+        var controller = new UsersController(dbContext);
+
+        var updatedUser = new User { Id = alreadySavedUser.Id, Username = "test2", Password = "test2" };
+        var result = await controller.UpdateUser(1, updatedUser);
+        Assert.IsType<NoContentResult>(result.Result);
+        var alreadySavedUserUpdated = await dbContext.Users.FindAsync(alreadySavedUser.Id);
+        Assert.Equal(updatedUser.Username, alreadySavedUserUpdated?.Username);
+        Assert.Equal(updatedUser.Password, alreadySavedUserUpdated?.Password);
+    }
 }
