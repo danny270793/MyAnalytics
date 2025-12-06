@@ -12,14 +12,14 @@ public class UsersController(AppDbContext context) : ControllerBase
     private readonly AppDbContext _context = context;
 
     [HttpGet]
-    public async Task<IActionResult> GetUsers()
+    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
         var users = await _context.Users.ToListAsync();
         return Ok(users);
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetUser(int id)
+    public async Task<ActionResult<User>> GetUser(int id)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null)
@@ -30,7 +30,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] User user)
+    public async Task<ActionResult<User>> CreateUser([FromBody] User user)
     {
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
@@ -38,7 +38,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
+    public async Task<ActionResult<User>> UpdateUser(int id, [FromBody] User user)
     {
         if (id != user.Id)
         {
@@ -50,7 +50,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id)
+    public async Task<ActionResult<User>> DeleteUser(int id)
     {
         var user = await _context.Users.FindAsync(id);
         if (user == null)
