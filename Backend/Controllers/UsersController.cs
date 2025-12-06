@@ -42,21 +42,16 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
+    public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
     {
-        if (id != user.Id)
-        {
-            return BadRequest();
-        }
-
         var existingUser = await _context.Users.FindAsync(id);
         if (existingUser == null)
         {
             return NotFound();
         }
 
-        existingUser.Username = user.Username;
-        existingUser.Password = user.Password;
+        existingUser.Username = request.Username;
+        existingUser.Password = request.Password;
         existingUser.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
