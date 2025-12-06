@@ -19,13 +19,15 @@ public class UsersController(AppDbContext context) : ControllerBase
         int pageSize = 10
     )
     {
-        var users = await _context.Users
+        var query = _context.Users.AsNoTracking();
+        var totalItems = await query.CountAsync();
+
+        var users = await query
             .OrderBy(user => user.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .Select(user => new UserResponse { Id = user.Id, Username = user.Username })
             .ToListAsync();
-        var totalItems = await _context.Users.CountAsync();
         return Ok(new PagedResult<UserResponse> { Items = users, Page = page, PageSize = pageSize, TotalItems = totalItems });
     }
 
