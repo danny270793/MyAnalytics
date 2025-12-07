@@ -22,9 +22,9 @@ public class UsersControllerTests
         await dbContext.SaveChangesAsync();
         var controller = new UsersController(dbContext);
 
-        var result = await controller.GetUsers();
+        var result = await controller.GetUsersAsync();
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Single(paginator.Items);
     }
 
@@ -34,9 +34,9 @@ public class UsersControllerTests
         var dbContext = Database.GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
-        var result = await controller.GetUsers();
+        var result = await controller.GetUsersAsync();
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Empty(paginator.Items);
     }
 
@@ -49,9 +49,9 @@ public class UsersControllerTests
         var totalUsers = 0;
         var page = 1;
         var pageSize = 10;
-        var result = await controller.GetUsers(page: page, pageSize: pageSize);
+        var result = await controller.GetUsersAsync(page: page, pageSize: pageSize);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
@@ -76,9 +76,9 @@ public class UsersControllerTests
 
         var page = 1;
         var pageSize = 10;
-        var result = await controller.GetUsers(page: page, pageSize: pageSize);
+        var result = await controller.GetUsersAsync(page: page, pageSize: pageSize);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
@@ -103,9 +103,9 @@ public class UsersControllerTests
 
         var page = 1;
         var pageSize = 10;
-        var result = await controller.GetUsers(page: page, pageSize: pageSize);
+        var result = await controller.GetUsersAsync(page: page, pageSize: pageSize);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
@@ -130,9 +130,9 @@ public class UsersControllerTests
 
         var page = 2;
         var pageSize = 10;
-        var result = await controller.GetUsers(page: page, pageSize: pageSize);
+        var result = await controller.GetUsersAsync(page: page, pageSize: pageSize);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
@@ -151,7 +151,7 @@ public class UsersControllerTests
         await dbContext.SaveChangesAsync();
         var controller = new UsersController(dbContext);
 
-        var result = await controller.GetUser(1);
+        var result = await controller.GetUserAsync(1);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var user = Assert.IsAssignableFrom<UserResponse>(okResult.Value);
 
@@ -165,7 +165,7 @@ public class UsersControllerTests
         var dbContext = Database.GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
-        var result = await controller.GetUser(1);
+        var result = await controller.GetUserAsync(1);
         Assert.IsType<NotFoundResult>(result.Result);
     }
 
@@ -176,9 +176,9 @@ public class UsersControllerTests
         var controller = new UsersController(dbContext);
 
         var request = new CreateUserRequest { Username = "test", Password = "test" };
-        var result = await controller.CreateUser(request);
+        var result = await controller.CreateUserAsync(request);
         var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-        Assert.Equal(nameof(controller.GetUser), createdAtActionResult.ActionName);
+        Assert.Equal(nameof(controller.GetUserAsync), createdAtActionResult.ActionName);
         Assert.Equal(1, createdAtActionResult.RouteValues?["id"]);
         var user = Assert.IsAssignableFrom<UserResponse>(createdAtActionResult.Value);
         Assert.Equal(1, user.Id);
@@ -195,7 +195,7 @@ public class UsersControllerTests
         var controller = new UsersController(dbContext);
 
         var request = new UpdateUserRequest { Username = "test2", Password = "test2" };
-        var result = await controller.UpdateUser(1, request);
+        var result = await controller.UpdateUserAsync(1, request);
         Assert.IsType<NoContentResult>(result);
         var alreadySavedUserUpdated = await dbContext.Users.FindAsync(alreadySavedUser.Id);
         Assert.Equal(request.Username, alreadySavedUserUpdated?.Username);
@@ -209,7 +209,7 @@ public class UsersControllerTests
         var controller = new UsersController(dbContext);
 
         var request = new UpdateUserRequest { Username = "test", Password = "test" };
-        var result = await controller.UpdateUser(1, request);
+        var result = await controller.UpdateUserAsync(1, request);
         Assert.IsType<NotFoundResult>(result);
     }
 
@@ -222,7 +222,7 @@ public class UsersControllerTests
         await dbContext.SaveChangesAsync();
         var controller = new UsersController(dbContext);
 
-        var result = await controller.DeleteUser(1);
+        var result = await controller.DeleteUserAsync(1);
         Assert.IsType<NoContentResult>(result);
         var alreadySavedUserDeleted = await dbContext.Users.FindWithFiltersAsync(alreadySavedUser.Id);
         Assert.Null(alreadySavedUserDeleted);
@@ -234,7 +234,7 @@ public class UsersControllerTests
         var dbContext = Database.GetInMemoryDbContext();
         var controller = new UsersController(dbContext);
 
-        var result = await controller.DeleteUser(1);
+        var result = await controller.DeleteUserAsync(1);
         Assert.IsType<NotFoundResult>(result);
     }
 }
