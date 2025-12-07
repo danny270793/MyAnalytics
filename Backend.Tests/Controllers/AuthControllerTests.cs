@@ -164,4 +164,24 @@ public class AuthControllerTests
         var message = messageProperty.GetValue(badRequestResult.Value)?.ToString();
         Assert.Equal("Invalid authorization header format", message);
     }
+
+    [Fact]
+    public async Task Logout_WithInvalidToken_ReturnsBadRequest()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+        var controller = new AuthController(dbContext);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        controller.Request.Headers["Authorization"] = "Bearer invalid-token";
+
+        var result = await controller.LogoutAsync();
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+
+        var messageProperty = badRequestResult.Value?.GetType().GetProperty("message");
+        Assert.NotNull(messageProperty);
+        var message = messageProperty.GetValue(badRequestResult.Value)?.ToString();
+        Assert.Equal("Invalid access token", message);
+    }
 }
