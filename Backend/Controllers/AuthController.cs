@@ -45,4 +45,27 @@ public class AuthController(AppDbContext context) : ControllerBase
             TokenType = token.TokenType
         });
     }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> LogoutAsync()
+    {
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader))
+        {
+            return BadRequest(new { message = "Missing authorization header" });
+        }
+        if (!authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(new { message = "Invalid authorization header format" });
+        }
+        var accessToken = authHeader.Substring("Bearer ".Length).Trim();
+        var token = await _context.Tokens.FirstOrDefaultAsync(t => t.AccessToken == accessToken);
+        if (token == null)
+        {
+            return BadRequest(new { message = "Invalid authorization header" });
+        }
+        _context.Tokens.Remove(token);
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
 }
