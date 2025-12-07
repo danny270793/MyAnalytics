@@ -117,7 +117,7 @@ public class AuthControllerTests
         {
             HttpContext = new DefaultHttpContext()
         };
-        controller.Request.Headers["Authorization"] = "Bearer valid-access-token";
+        controller.Request.Headers["Authorization"] = $"Bearer {token.AccessToken}";
 
         var result = await controller.LogoutAsync();
 
