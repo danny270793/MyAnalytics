@@ -1,7 +1,7 @@
 using Backend.Data;
+using Backend.Models;
 using Backend.Requests;
 using Backend.Responses;
-using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,7 +26,8 @@ public class AuthController(AppDbContext context) : ControllerBase
             return Unauthorized(new { message = "Invalid username or password" });
         }
 
-        var token = new Token {
+        var token = new Token
+        {
             UserId = user.Id,
             User = user,
             AccessToken = Guid.NewGuid().ToString(),
@@ -37,7 +38,8 @@ public class AuthController(AppDbContext context) : ControllerBase
         await _context.Tokens.AddAsync(token);
         await _context.SaveChangesAsync();
 
-        return Ok(new LoginResponse {
+        return Ok(new LoginResponse
+        {
             User = new UserResponse { Id = user.Id, Username = user.Username },
             AccessToken = token.AccessToken,
             RefreshToken = token.RefreshToken,
@@ -87,7 +89,8 @@ public class AuthController(AppDbContext context) : ControllerBase
         {
             return BadRequest(new { message = "Invalid refresh token" });
         }
-        var newToken = new Token {
+        var newToken = new Token
+        {
             UserId = token.UserId,
             User = token.User,
             AccessToken = Guid.NewGuid().ToString(),
@@ -98,7 +101,8 @@ public class AuthController(AppDbContext context) : ControllerBase
         await _context.Tokens.AddAsync(newToken);
         _context.Tokens.Remove(token);
         await _context.SaveChangesAsync();
-        return Ok(new LoginResponse {
+        return Ok(new LoginResponse
+        {
             User = new UserResponse { Id = token.User.Id, Username = token.User.Username },
             AccessToken = newToken.AccessToken,
             RefreshToken = newToken.RefreshToken,
