@@ -125,4 +125,23 @@ public class AuthControllerTests
         var deletedToken = await dbContext.Tokens.FirstOrDefaultAsync(t => t.Id == token.Id);
         Assert.Null(deletedToken);
     }
+
+    [Fact]
+    public async Task Logout_WithoutAuthorizationHeader_ReturnsBadRequest()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+        var controller = new AuthController(dbContext);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+
+        var result = await controller.LogoutAsync();
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+
+        var messageProperty = badRequestResult.Value?.GetType().GetProperty("message");
+        Assert.NotNull(messageProperty);
+        var message = messageProperty.GetValue(badRequestResult.Value)?.ToString();
+        Assert.Equal("Missing authorization header", message);
+    }
 }
