@@ -42,7 +42,7 @@ public class AuthControllerTests
         await dbContext.SaveChangesAsync();
         var controller = new AuthController(dbContext);
 
-        var request = new LoginRequest { Username = "wronguser", Password = "testpassword" };
+        var request = new LoginRequest { Username = "wronguser", Password = user.Password };
         var result = await controller.LoginAsync(request);
         var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result.Result);
 
