@@ -24,7 +24,7 @@ public class UsersControllerTests
 
         var result = await controller.GetUsersAsync();
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Single(paginator.Items);
     }
 
@@ -36,7 +36,7 @@ public class UsersControllerTests
 
         var result = await controller.GetUsersAsync();
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Empty(paginator.Items);
     }
 
@@ -51,7 +51,7 @@ public class UsersControllerTests
         var pageSize = 10;
         var result = await controller.GetUsersAsync(page: page, pageSize: pageSize);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
@@ -78,7 +78,7 @@ public class UsersControllerTests
         var pageSize = 10;
         var result = await controller.GetUsersAsync(page: page, pageSize: pageSize);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
@@ -105,7 +105,7 @@ public class UsersControllerTests
         var pageSize = 10;
         var result = await controller.GetUsersAsync(page: page, pageSize: pageSize);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
@@ -132,7 +132,7 @@ public class UsersControllerTests
         var pageSize = 10;
         var result = await controller.GetUsersAsync(page: page, pageSize: pageSize);
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var paginator = Assert.IsAssignableFrom<PagedResult<UserResponse>>(okResult.Value);
+        var paginator = Assert.IsAssignableFrom<PagedResponse<UserResponse>>(okResult.Value);
         Assert.Equal(page, paginator.Page);
         Assert.Equal(pageSize, paginator.PageSize);
         Assert.Equal(totalUsers, paginator.TotalItems);
