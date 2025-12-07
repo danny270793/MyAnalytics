@@ -5,6 +5,7 @@ using Backend.Requests;
 using Backend.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers;
 
@@ -15,6 +16,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     private readonly AppDbContext _context = context;
 
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<PagedResult<UserResponse>>> GetUsers(
         int page = 1,
         int pageSize = 10
