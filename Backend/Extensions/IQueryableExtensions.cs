@@ -5,7 +5,7 @@ namespace Backend.Extensions;
 
 public static class IQueryableExtensions
 {
-    public static async Task<PagedResult<T>> ToPagedResultAsync<T>(
+    public static async Task<PagedResponse<T>> ToPagedResultAsync<T>(
         this IQueryable<T> query,
         int page,
         int pageSize)
@@ -16,7 +16,7 @@ public static class IQueryableExtensions
             .Take(pageSize)
             .ToListAsync();
 
-        return new PagedResult<T>
+        return new PagedResponse<T>
         {
             Page = page,
             PageSize = pageSize,
