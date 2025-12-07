@@ -44,8 +44,12 @@ public class AuthControllerTests
 
         var request = new LoginRequest { Username = "wronguser", Password = "testpassword" };
         var result = await controller.LoginAsync(request);
+        var unauthorizedResult = Assert.IsType<UnauthorizedObjectResult>(result.Result);
 
-        Assert.IsType<UnauthorizedObjectResult>(result.Result);
+        var messageProperty = unauthorizedResult.Value?.GetType().GetProperty("message");
+        Assert.NotNull(messageProperty);
+        var message = messageProperty.GetValue(unauthorizedResult.Value)?.ToString();
+        Assert.Equal("Invalid username or password", message);
     }
 }
 
