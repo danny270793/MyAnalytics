@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Backend.Authentication;
 using Backend.Models;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Text.Encodings.Web;
 using Xunit;
 
 namespace Backend.Tests.Authentication;
