@@ -135,6 +135,32 @@ public class TokenAuthenticationHandlerTests
         Assert.NotNull(result.Failure);
         Assert.Equal("Missing access token", result.Failure?.Message);
     }
+
+    [Fact]
+    public async Task HandleAuthenticateAsync_WithInvalidToken_ReturnsFailure()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+
+        var options = new Mock_OptionsMonitor();
+        var loggerFactory = new LoggerFactory();
+        var encoder = UrlEncoder.Default;
+
+        var handler = new TokenAuthenticationHandler(options, loggerFactory, encoder, dbContext);
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Headers["Authorization"] = $"Bearer invalid-token";
+
+        await handler.InitializeAsync(
+            new AuthenticationScheme(TokenAuthenticationHandler.SchemeName, null, typeof(TokenAuthenticationHandler)),
+            httpContext
+        );
+
+        var result = await handler.AuthenticateAsync();
+
+        Assert.False(result.Succeeded);
+        Assert.NotNull(result.Failure);
+        Assert.Equal("Invalid access token", result.Failure?.Message);
+    }
 }
 
 // Helper class to mock IOptionsMonitor<AuthenticationSchemeOptions>
