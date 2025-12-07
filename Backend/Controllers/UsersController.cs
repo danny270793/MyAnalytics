@@ -3,9 +3,9 @@ using Backend.Extensions;
 using Backend.Models;
 using Backend.Requests;
 using Backend.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Backend.Controllers;
 
@@ -17,7 +17,7 @@ public class UsersController(AppDbContext context) : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<PagedResult<UserResponse>>> GetUsers(
+    public async Task<ActionResult<PagedResponse<UserResponse>>> GetUsersAsync(
         int page = 1,
         int pageSize = 10
     )
@@ -31,7 +31,8 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<UserResponse>> GetUser(int id)
+    [Authorize]
+    public async Task<ActionResult<UserResponse>> GetUserAsync(int id)
     {
         var user = await _context.Users.Select(user => new UserResponse { Id = user.Id, Username = user.Username }).FirstOrDefaultAsync(user => user.Id == id);
         if (user == null)
@@ -42,17 +43,19 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<UserResponse>> CreateUser([FromBody] CreateUserRequest request)
+    [Authorize]
+    public async Task<ActionResult<UserResponse>> CreateUserAsync([FromBody] CreateUserRequest request)
     {
         var user = new User { Username = request.Username, Password = request.Password };
         var addedUser = await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
         var userResponse = new UserResponse { Id = addedUser.Entity.Id, Username = addedUser.Entity.Username };
-        return CreatedAtAction(nameof(GetUser), new { id = addedUser.Entity.Id }, userResponse);
+        return CreatedAtAction(nameof(GetUserAsync), new { id = addedUser.Entity.Id }, userResponse);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
+    [Authorize]
+    public async Task<IActionResult> UpdateUserAsync(int id, [FromBody] UpdateUserRequest request)
     {
         var existingUser = await _context.Users.FindWithFiltersAsync(id);
         if (existingUser == null)
@@ -68,7 +71,8 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id)
+    [Authorize]
+    public async Task<IActionResult> DeleteUserAsync(int id)
     {
         var user = await _context.Users.FindWithFiltersAsync(id);
         if (user == null)

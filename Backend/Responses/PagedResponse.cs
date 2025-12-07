@@ -1,6 +1,6 @@
 namespace Backend.Responses;
 
-public class PagedResult<T>
+public class PagedResponse<T>
 {
     public required IEnumerable<T> Items { get; set; }
     public required int Page { get; set; }

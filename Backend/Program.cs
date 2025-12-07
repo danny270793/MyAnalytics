@@ -1,7 +1,7 @@
-using Backend.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication;
 using Backend.Authentication;
+using Backend.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
