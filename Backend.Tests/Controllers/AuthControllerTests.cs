@@ -217,7 +217,7 @@ public class AuthControllerTests
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
         var loginResponse = Assert.IsType<LoginResponse>(okResult.Value);
         Assert.Equal(user.Id, loginResponse.User.Id);
-        Assert.NotEqual("old-access-token", loginResponse.AccessToken);
-        Assert.NotEqual("valid-refresh-token", loginResponse.RefreshToken);
+        Assert.NotEqual(oldToken.AccessToken, loginResponse.AccessToken);
+        Assert.NotEqual(oldToken.RefreshToken, loginResponse.RefreshToken);
     }
 }
