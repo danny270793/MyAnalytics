@@ -31,6 +31,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public async Task<ActionResult<UserResponse>> GetUser(int id)
     {
         var user = await _context.Users.Select(user => new UserResponse { Id = user.Id, Username = user.Username }).FirstOrDefaultAsync(user => user.Id == id);
@@ -42,6 +43,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<UserResponse>> CreateUser([FromBody] CreateUserRequest request)
     {
         var user = new User { Username = request.Username, Password = request.Password };
@@ -52,6 +54,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
     {
         var existingUser = await _context.Users.FindWithFiltersAsync(id);
@@ -68,6 +71,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> DeleteUser(int id)
     {
         var user = await _context.Users.FindWithFiltersAsync(id);
