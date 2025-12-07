@@ -3,9 +3,10 @@ using Backend.Extensions;
 using Backend.Models;
 using Backend.Requests;
 using Backend.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Backend.Controllers;
 
@@ -47,7 +48,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     public async Task<ActionResult<UserResponse>> CreateUser([FromBody] CreateUserRequest request)
     {
         var user = new User { Username = request.Username, Password = request.Password };
-        var addedUser = await _context.Users.AddAsync(user);
+        EntityEntry<User> addedUser = await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
         var userResponse = new UserResponse { Id = addedUser.Entity.Id, Username = addedUser.Entity.Username };
         return CreatedAtAction(nameof(GetUser), new { id = addedUser.Entity.Id }, userResponse);
@@ -57,7 +58,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     [Authorize]
     public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserRequest request)
     {
-        var existingUser = await _context.Users.FindWithFiltersAsync(id);
+        User? existingUser = await _context.Users.FindWithFiltersAsync(id);
         if (existingUser == null)
         {
             return NotFound();
@@ -74,7 +75,7 @@ public class UsersController(AppDbContext context) : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var user = await _context.Users.FindWithFiltersAsync(id);
+        User? user = await _context.Users.FindWithFiltersAsync(id);
         if (user == null)
         {
             return NotFound();
