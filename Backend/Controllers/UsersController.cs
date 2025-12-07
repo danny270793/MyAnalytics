@@ -17,7 +17,7 @@ public class UsersController(AppDbContext context) : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<PagedResult<UserResponse>>> GetUsersAsync(
+    public async Task<ActionResult<PagedResponse<UserResponse>>> GetUsersAsync(
         int page = 1,
         int pageSize = 10
     )
