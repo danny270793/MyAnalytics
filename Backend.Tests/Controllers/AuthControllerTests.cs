@@ -70,5 +70,26 @@ public class AuthControllerTests
         var message = messageProperty.GetValue(unauthorizedResult.Value)?.ToString();
         Assert.Equal("Invalid username or password", message);
     }
+
+    [Fact]
+    public async Task Login_CreatesTokenInDatabase()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+        var user = new User { Username = "testuser", Password = "testpassword" };
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
+        var controller = new AuthController(dbContext);
+
+        var request = new LoginRequest { Username = user.Username, Password = user.Password };
+        var result = await controller.LoginAsync(request);
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var loginResponse = Assert.IsType<LoginResponse>(okResult.Value);
+
+        var token = await dbContext.Tokens.FirstOrDefaultAsync(t => t.UserId == user.Id);
+        Assert.NotNull(token);
+        Assert.Equal(loginResponse.AccessToken, token.AccessToken);
+        Assert.Equal(loginResponse.RefreshToken, token.RefreshToken);
+    }
 }
 
