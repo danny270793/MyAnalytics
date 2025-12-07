@@ -258,4 +258,23 @@ public class AuthControllerTests
         Assert.NotNull(newToken);
         Assert.NotEqual(oldToken.AccessToken, newToken.AccessToken);
     }
+
+    [Fact]
+    public async Task Refresh_WithoutAuthorizationHeader_ReturnsBadRequest()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+        var controller = new AuthController(dbContext);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+
+        var result = await controller.RefreshAsync();
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+        var messageProperty = badRequestResult.Value?.GetType().GetProperty("message");
+        Assert.NotNull(messageProperty);
+        var message = messageProperty.GetValue(badRequestResult.Value)?.ToString();
+        Assert.Equal("Missing authorization header", message);
+    }
 }
