@@ -220,4 +220,42 @@ public class AuthControllerTests
         Assert.NotEqual(oldToken.AccessToken, loginResponse.AccessToken);
         Assert.NotEqual(oldToken.RefreshToken, loginResponse.RefreshToken);
     }
+
+    [Fact]
+    public async Task Refresh_RemovesOldTokenAndCreatesNewOne()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+        var user = new User { Username = "testuser", Password = "testpassword" };
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
+
+        var oldToken = new Token
+        {
+            UserId = user.Id,
+            User = user,
+            AccessToken = "old-access-token",
+            RefreshToken = "valid-refresh-token",
+            ExpiresIn = 15 * 60 * 1000,
+            TokenType = "Bearer"
+        };
+        dbContext.Tokens.Add(oldToken);
+        await dbContext.SaveChangesAsync();
+        var oldTokenId = oldToken.Id;
+
+        var controller = new AuthController(dbContext);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        controller.Request.Headers["Authorization"] = $"Refresh {oldToken.RefreshToken}";
+
+        await controller.RefreshAsync();
+
+        var deletedOldToken = await dbContext.Tokens.FirstOrDefaultAsync(t => t.Id == oldTokenId);
+        Assert.Null(deletedOldToken);
+
+        var newToken = await dbContext.Tokens.FirstOrDefaultAsync(t => t.UserId == user.Id);
+        Assert.NotNull(newToken);
+        Assert.NotEqual(oldToken.AccessToken, newToken.AccessToken);
+    }
 }
