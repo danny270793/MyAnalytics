@@ -184,4 +184,40 @@ public class AuthControllerTests
         var message = messageProperty.GetValue(badRequestResult.Value)?.ToString();
         Assert.Equal("Invalid access token", message);
     }
+
+    [Fact]
+    public async Task Refresh_WithValidRefreshToken_ReturnsNewTokens()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+        var user = new User { Username = "testuser", Password = "testpassword" };
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
+
+        var oldToken = new Token
+        {
+            UserId = user.Id,
+            User = user,
+            AccessToken = "old-access-token",
+            RefreshToken = "valid-refresh-token",
+            ExpiresIn = 15 * 60 * 1000,
+            TokenType = "Bearer"
+        };
+        dbContext.Tokens.Add(oldToken);
+        await dbContext.SaveChangesAsync();
+
+        var controller = new AuthController(dbContext);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        controller.Request.Headers["Authorization"] = "Refresh valid-refresh-token";
+
+        var result = await controller.RefreshAsync();
+
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var loginResponse = Assert.IsType<LoginResponse>(okResult.Value);
+        Assert.Equal(user.Id, loginResponse.User.Id);
+        Assert.NotEqual("old-access-token", loginResponse.AccessToken);
+        Assert.NotEqual("valid-refresh-token", loginResponse.RefreshToken);
+    }
 }
