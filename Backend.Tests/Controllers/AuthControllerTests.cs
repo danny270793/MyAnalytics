@@ -297,4 +297,24 @@ public class AuthControllerTests
         var message = messageProperty.GetValue(badRequestResult.Value)?.ToString();
         Assert.Equal("Invalid authorization header format", message);
     }
+
+    [Fact]
+    public async Task Refresh_WithInvalidRefreshToken_ReturnsBadRequest()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+        var controller = new AuthController(dbContext);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+        controller.Request.Headers["Authorization"] = "Refresh invalid-refresh-token";
+
+        var result = await controller.RefreshAsync();
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+
+        var messageProperty = badRequestResult.Value?.GetType().GetProperty("message");
+        Assert.NotNull(messageProperty);
+        var message = messageProperty.GetValue(badRequestResult.Value)?.ToString();
+        Assert.Equal("Invalid refresh token", message);
+    }
 }
