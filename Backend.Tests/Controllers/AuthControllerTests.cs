@@ -32,5 +32,20 @@ public class AuthControllerTests
         Assert.NotNull(loginResponse.RefreshToken);
         Assert.Equal("Bearer", loginResponse.TokenType);
     }
+    
+    [Fact]
+    public async Task Login_WithInvalidUsername_ReturnsUnauthorized()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+        var user = new User { Username = "testuser", Password = "testpassword" };
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
+        var controller = new AuthController(dbContext);
+
+        var request = new LoginRequest { Username = "wronguser", Password = "testpassword" };
+        var result = await controller.LoginAsync(request);
+
+        Assert.IsType<UnauthorizedObjectResult>(result.Result);
+    }
 }
 
