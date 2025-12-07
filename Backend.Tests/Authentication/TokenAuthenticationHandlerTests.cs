@@ -161,6 +161,48 @@ public class TokenAuthenticationHandlerTests
         Assert.NotNull(result.Failure);
         Assert.Equal("Invalid access token", result.Failure?.Message);
     }
+
+    [Fact]
+    public async Task HandleAuthenticateAsync_ExpiredToken_ReturnsFailure()
+    {
+        var dbContext = Database.GetInMemoryDbContext();
+
+        var user = new User { Username = "testuser", Password = "testpassword" };
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
+
+        var token = new Token
+        {
+            UserId = user.Id,
+            User = user,
+            AccessToken = "valid-access-token",
+            RefreshToken = "valid-refresh-token",
+            ExpiresIn = 1, // 1 milliseconds
+            TokenType = "Bearer"
+        };
+        dbContext.Tokens.Add(token);
+        await dbContext.SaveChangesAsync();
+
+        var options = new Mock_OptionsMonitor();
+        var loggerFactory = new LoggerFactory();
+        var encoder = UrlEncoder.Default;
+
+        var handler = new TokenAuthenticationHandler(options, loggerFactory, encoder, dbContext);
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Headers["Authorization"] = $"Bearer {token.AccessToken}";
+
+        await handler.InitializeAsync(
+            new AuthenticationScheme(TokenAuthenticationHandler.SchemeName, null, typeof(TokenAuthenticationHandler)),
+            httpContext
+        );
+
+        var result = await handler.AuthenticateAsync();
+
+        Assert.False(result.Succeeded);
+        Assert.NotNull(result.Failure);
+        Assert.Equal("Token has expired", result.Failure?.Message);
+    }
 }
 
 // Helper class to mock IOptionsMonitor<AuthenticationSchemeOptions>
